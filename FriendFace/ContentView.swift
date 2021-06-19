@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var userList: [User] = []
+    
     var body: some View {
         NavigationView {
             List(userList) { user in

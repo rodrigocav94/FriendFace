@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailView: View {
     let userList: [User]
     let user: User
+    
     var body: some View {
         List {
             Section(header: Text("Profile")) {
@@ -52,10 +53,21 @@ struct DetailView: View {
                 Text(user.about)
             }
             Section(header: Text("Friends")) {
-                Text("")
+                ForEach(0..<user.friends.count) {friend in
+                    NavigationLink(destination: DetailView(userList: userList, user: findFriend(friend: user.friends[friend])), label: { Text(user.friends[friend].name) })
+                }
             }
         }
         .navigationBarTitle(Text(user.name), displayMode: .inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: { }, label: { Image(systemName: "house") })
+            }
+        }
+    }
+    func findFriend(friend: User.Friend) -> User {
+        let match = userList.first(where: { $0.id == friend.id })!
+        return match
     }
 }
 
