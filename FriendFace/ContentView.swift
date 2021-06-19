@@ -9,11 +9,12 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var userList: [User] = []
+    @EnvironmentObject var navigationHelper: NavigationHelper
     
     var body: some View {
         NavigationView {
             List(userList) { user in
-                NavigationLink(destination: DetailView(userList: userList, user: user), label: {
+                NavigationLink(destination: DetailView(userList: userList, user: user), tag: user.id, selection: $navigationHelper.selection, label: {
                     HStack {
                         Text(user.name)
                             .font(.headline)
@@ -67,4 +68,8 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
+}
+
+class NavigationHelper: ObservableObject {
+    @Published var selection: UUID? = nil
 }

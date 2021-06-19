@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailView: View {
     let userList: [User]
     let user: User
+    @EnvironmentObject var navigationHelper: NavigationHelper
     
     var body: some View {
         List {
@@ -61,7 +62,7 @@ struct DetailView: View {
         .navigationBarTitle(Text(user.name), displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { }, label: { Image(systemName: "house") })
+                Button(action: { navigationHelper.selection = nil }, label: { Image(systemName: "house") })
             }
         }
     }
