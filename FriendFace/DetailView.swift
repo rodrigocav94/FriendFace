@@ -6,24 +6,28 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct DetailView: View {
-    let userList: [User]
-    let user: User
+    let user: UserCore
+    
+    @FetchRequest(entity: UserCore.entity(), sortDescriptors: []) var users: FetchedResults<UserCore>
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var navigationHelper: NavigationHelper
+    
     
     var body: some View {
         List {
             Section(header: Text("Profile")) {
-                RowView(tittle: "Name", response: user.name)
-                RowView(tittle: "Age", response: "\(user.age) years old")
-                RowView(tittle: "Company", response: user.company)
-                RowView(tittle: "E-mail", response: user.email)
+                RowView(tittle: "Name", response: user.wrappedName)
+                RowView(tittle: "Age", response: "\(user.wrappedAge) years old")
+                RowView(tittle: "Company", response: user.wrappedCompany)
+                RowView(tittle: "E-mail", response: user.wrappedEmail)
                 HStack {
                     Text("Address:")
                         .foregroundColor(.gray)
                     ScrollView(.horizontal, showsIndicators: false) {
-                        Text(user.address)
+                        Text(user.wrappedAddress)
                     }
                 }
                 HStack {
@@ -32,14 +36,13 @@ struct DetailView: View {
                     Text(user.isActive ? "Active" : "Inactive")
                         .foregroundColor(user.isActive ? .green : .red)
                 }
-                RowView(tittle: "Registered since", response: user.wrappedRegistered)
                 HStack {
                     Text("Tags:")
                         .foregroundColor(.gray)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            ForEach(0 ..< user.tags.count) {tag in
-                                Text(user.tags[tag])
+                            ForEach(0 ..< user.wrappedTags.count) {tag in
+                                Text(user.wrappedTags[tag])
                                     .font(.footnote)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
@@ -51,32 +54,32 @@ struct DetailView: View {
                 }
             }
             Section(header: Text("About")) {
-                Text(user.about)
+                Text(user.wrappedAbout)
             }
             Section(header: Text("Friends")) {
-                ForEach(0..<user.friends.count) {friend in
-                    NavigationLink(destination: DetailView(userList: userList, user: findFriend(friend: user.friends[friend])), label: { Text(user.friends[friend].name) })
+                ForEach(0..<user.friendsArray.count) { friend in
+                    NavigationLink(destination: DetailView(user: findFriend(friend: user.friendsArray[friend])), label: { Text(user.friendsArray[friend].wrappedName) })
+                    
                 }
             }
         }
-        .navigationBarTitle(Text(user.name), displayMode: .inline)
+        .navigationBarTitle(Text(user.wrappedName), displayMode: .inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: { navigationHelper.selection = nil }, label: { Image(systemName: "house") })
             }
         }
     }
-    func findFriend(friend: User.Friend) -> User {
-        let match = userList.first(where: { $0.id == friend.id })!
+    func findFriend(friend: FriendCore) -> UserCore {
+        let match = users.first(where: { $0.id == friend.id })!
         return match
     }
 }
 
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
-        let id = UUID()
-        let user1 = User(id: id, isActive: true, name: "Pessoa", age: 26, company: "Secreta", email: "user@secreta.com", address: "Campina Grande", about: "É alguém", registered: Date(), tags: ["Pessoa","Novo","Alguém","Anônimo"], friends: [User.Friend(id: id, name: "Si mesmo")])
-        DetailView(userList: [user1], user: user1)
+        let user1 = UserCore()
+        DetailView(user: user1)
     }
 }
 

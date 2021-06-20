@@ -6,20 +6,24 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct ContentView: View {
-    @State private var userList: [User] = []
     @EnvironmentObject var navigationHelper: NavigationHelper
+    
+    @Environment(\.managedObjectContext) var moc
+    @FetchRequest(entity: UserCore.entity(), sortDescriptors: []) var users: FetchedResults<UserCore>
+    
     
     var body: some View {
         NavigationView {
-            List(userList) { user in
-                NavigationLink(destination: DetailView(userList: userList, user: user), tag: user.id, selection: $navigationHelper.selection, label: {
+            List(users) { user in
+                NavigationLink(destination: DetailView(user: user), tag: user.wrappedId, selection: $navigationHelper.selection, label: {
                     HStack {
-                        Text(user.name)
+                        Text(user.wrappedName)
                             .font(.headline)
                             .layoutPriority(1)
-                        Text(String("\(user.age) y/o"))
+                        Text(String("\(user.wrappedAge) y/o"))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         Spacer()
@@ -33,7 +37,10 @@ struct ContentView: View {
                 })
             }
             .navigationBarTitle(Text("FriendFace"))
-            .onAppear(perform: fetchData)
+            .onAppear(perform:
+                        { if users.isEmpty {
+                            fetchData()
+                        }})
         }
     }
     func fetchData() {
@@ -54,7 +61,35 @@ struct ContentView: View {
             do {
                 let userListBackground = try userDecoder.decode([User].self, from: userData)
                 DispatchQueue.main.async {
-                    userList = userListBackground
+                    for person in userListBackground {
+                        
+                        let newUser = UserCore(context: self.moc)
+                        newUser.id = person.id
+                        newUser.isActive = person.isActive
+                        newUser.name = person.name
+                        newUser.age = Int16(person.age)
+                        newUser.company = person.company
+                        newUser.email = person.email
+                        newUser.address = person.address
+                        newUser.about = person.about
+                        newUser.registered = person.registered
+                        newUser.tags = person.tags
+                        
+                        var tempFriends = [FriendCore]()
+                        
+                        for friend in person.friends {
+                            let newFriend = FriendCore(context: self.moc)
+                            newFriend.id = friend.id
+                            newFriend.name = friend.name
+                            tempFriends.append(newFriend)
+                        }
+                        
+                        newUser.friends = NSSet(array: tempFriends)
+                        
+                        if moc.hasChanges {
+                            try? self.moc.save()
+                        }
+                    }
                 }
                 return
             } catch {
