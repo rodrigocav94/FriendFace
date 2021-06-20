@@ -12,7 +12,6 @@ struct DetailView: View {
     let user: UserCore
     
     @FetchRequest(entity: UserCore.entity(), sortDescriptors: []) var users: FetchedResults<UserCore>
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var navigationHelper: NavigationHelper
     
     

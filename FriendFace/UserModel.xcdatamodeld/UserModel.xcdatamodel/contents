@@ -3,7 +3,7 @@
     <entity name="FriendCore" representedClassName="FriendCore" syncable="YES">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="friendOf" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserCore"/>
+        <relationship name="friendOf" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserCore" inverseName="friends" inverseEntity="UserCore"/>
     </entity>
     <entity name="UserCore" representedClassName="UserCore" syncable="YES">
         <attribute name="about" optional="YES" attributeType="String"/>
@@ -16,7 +16,7 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="registered" optional="YES" attributeType="Date"/>
         <attribute name="tags" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
-        <relationship name="friends" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FriendCore"/>
+        <relationship name="friends" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FriendCore" inverseName="friendOf" inverseEntity="FriendCore"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>

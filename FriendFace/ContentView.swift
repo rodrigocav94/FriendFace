@@ -12,7 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var navigationHelper: NavigationHelper
     
     @Environment(\.managedObjectContext) var moc
-    @FetchRequest(entity: UserCore.entity(), sortDescriptors: []) var users: FetchedResults<UserCore>
+    @FetchRequest(entity: UserCore.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \UserCore.name, ascending: true)]) var users: FetchedResults<UserCore>
     
     
     var body: some View {
