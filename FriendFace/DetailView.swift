@@ -35,6 +35,7 @@ struct DetailView: View {
                     Text(user.isActive ? "Active" : "Inactive")
                         .foregroundColor(user.isActive ? .green : .red)
                 }
+                RowView(tittle: "Registered since", response: user.wrappedRegistered)
                 HStack {
                     Text("Tags:")
                         .foregroundColor(.gray)

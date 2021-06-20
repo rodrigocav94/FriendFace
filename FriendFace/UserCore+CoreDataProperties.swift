@@ -30,41 +30,45 @@ extension UserCore {
     
     public var wrappedId: UUID {
             id ?? UUID()
+    }
+    public var wrappedIsActive: Bool {
+        isActive
+    }
+    public var wrappedName: String {
+        name ?? "Unknown Name"
+    }
+    public var wrappedAge: Int {
+        Int(age)
+    }
+    public var wrappedCompany: String {
+        company ?? "Unknown Company"
+    }
+    public var wrappedEmail: String {
+        email ?? "Unknown E-mail"
+    }
+    public var wrappedAddress: String {
+        address ?? "Unknown Address"
+    }
+    public var wrappedAbout: String {
+        about ?? "Unknown Information"
+    }
+    public var wrappedTags: [String] {
+        tags ?? []
+    }
+    public var wrappedRegistered: String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .none
+        formatter.dateStyle = .long
+        let dateString = formatter.string(from: registered ?? Date())
+        return dateString
+    }
+    
+    public var friendsArray: [FriendCore] {
+        let set = friends as? Set<FriendCore> ?? []
+        return set.sorted {
+            $0.wrappedName < $1.wrappedName
         }
-        public var wrappedIsActive: Bool {
-            isActive
-        }
-        public var wrappedName: String {
-            name ?? "Unknown Name"
-        }
-        public var wrappedAge: Int {
-            Int(age)
-        }
-        public var wrappedCompany: String {
-            company ?? "Unknown Company"
-        }
-        public var wrappedEmail: String {
-            email ?? "Unknown E-mail"
-        }
-        public var wrappedAddress: String {
-            address ?? "Unknown Address"
-        }
-        public var wrappedAbout: String {
-            about ?? "Unknown Information"
-        }
-        public var wrappedRegistered: Date {
-            registered ?? Date()
-        }
-        public var wrappedTags: [String] {
-            tags ?? []
-        }
-        
-        public var friendsArray: [FriendCore] {
-            let set = friends as? Set<FriendCore> ?? []
-            return set.sorted {
-                $0.wrappedName < $1.wrappedName
-            }
-        }
+    }
 
 }
 
